@@ -7,6 +7,9 @@
 namespace ProjectOne::Mouse::Evemu {
     class EvemuCommandBuilderImpl : public EvemuCommandBuilder {
     public:
-        std::string Build(std::string event, int type, int code, int value);
+        std::string build(std::string event, int type, int code, int value) override;
+
+        ~EvemuCommandBuilderImpl() override {
+        }
     };
 }

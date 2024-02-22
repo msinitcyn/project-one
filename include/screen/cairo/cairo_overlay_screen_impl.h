@@ -1,10 +1,13 @@
 #include "screen/overlay_screen.h"
 
 namespace ProjectOne::Screen::Cairo {
-    class CairoOverlayScreenImpl : OverlayScreen {
+    class CairoOverlayScreenImpl : public OverlayScreen {
     public:
-        void draw();
-        void hide();
+        void draw() override;
+        void hide() override;
+
+        ~CairoOverlayScreenImpl() override {
+        }
     };
 
 }

@@ -22,6 +22,7 @@ namespace ProjectOne::Mouse::Evemu {
 
         void click() override;
 
-        ~EvemuMouseManipulatorImpl();
+        ~EvemuMouseManipulatorImpl() override {
+        }
     };
 }

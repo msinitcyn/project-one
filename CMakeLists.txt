@@ -17,6 +17,8 @@ include_directories(${X11_INCLUDE_DIR} ${CAIRO_INCLUDE_DIRS})
 # Add the source files to the executable
 add_executable(X11Overlay src/main.cpp)
 
+target_include_directories(X11Overlay PRIVATE include)
+
 # Link against X11 and Cairo libraries
 target_link_libraries(X11Overlay ${X11_LIBRARIES} ${CAIRO_LIBRARIES})
 
