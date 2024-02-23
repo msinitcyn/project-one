@@ -5,12 +5,16 @@
 #include <X11/Xutil.h>
 #include <cstdlib>
 
+#include <unistd.h>
+
 #include <cairo.h>
 #include <cairo-xlib.h>
 
+#include "screen/cairo/cairo_overlay_screen_impl.h"
+
 namespace ProjectOne::Screen::Cairo {
 
-    void draw(cairo_t *cr, int width, int height) {
+    static void draw1(cairo_t *cr, int width, int height) {
         cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 0.5);
         cairo_rectangle(cr, 0, 0, width, height);
         cairo_fill(cr);
@@ -69,14 +73,15 @@ namespace ProjectOne::Screen::Cairo {
                                       width, height);
         cairo_t* cr = cairo_create(surf);
 
-        draw(cr, width, height);
+        draw1(cr, width, height);
 
         XWarpPointer(d, None, DefaultRootWindow(d), 0, 0, 0, 0, 300, 400);
 
         XFlush(d);
 
         // show the window for 10 seconds
-        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        usleep(10000);
 
         cairo_destroy(cr);
         cairo_surface_destroy(surf);
