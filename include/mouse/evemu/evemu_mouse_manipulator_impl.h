@@ -6,7 +6,7 @@
 #include "../mouse_manipulator.h"
 
 namespace ProjectOne::Mouse::Evemu {
-    class EvemuMouseManipulatorImpl : MouseManipulator {
+    class EvemuMouseManipulatorImpl : public MouseManipulator {
         const int BIG_NEGATIVE_X_SHIFT = -2000;
         const int BIG_NEGATIVE_Y_SHIFT = -2000;
 
