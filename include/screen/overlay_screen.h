@@ -1,7 +1,11 @@
+#pragma once
+
+#include "screen/screen_map.h"
+
 namespace ProjectOne::Screen {
     class OverlayScreen {
     public:
-        virtual void draw() = 0;
+        virtual void draw(ScreenMap& screenMap) = 0;
         virtual void hide() = 0;
 
         virtual ~OverlayScreen() {

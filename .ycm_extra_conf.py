@@ -84,6 +84,7 @@ get_python_inc(),
 '-isystem',
 'cpp/ycm/benchmarks/benchmark/include',
 '-I', os.path.join(DIR_OF_THIS_SCRIPT, 'include'),
+'-I/usr/include/cairo',
 '-std=c++20' 
 ]
 
