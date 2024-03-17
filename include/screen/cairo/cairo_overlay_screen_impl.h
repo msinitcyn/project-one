@@ -9,6 +9,9 @@ namespace ProjectOne::Screen::Cairo {
         void draw(ScreenMap& screenMap) override;
         void hide() override;
 
+        int get_width() override;
+        int get_height() override;
+
         ~CairoOverlayScreenImpl() override {
         }
 

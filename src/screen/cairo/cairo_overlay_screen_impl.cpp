@@ -17,8 +17,8 @@ namespace ProjectOne::Screen::Cairo {
         display = XOpenDisplay(NULL);
         int snum;
         snum = DefaultScreen(display);
-        int width = DisplayWidth(display, snum);
-        int height = DisplayHeight(display, snum);
+        width = DisplayWidth(display, snum);
+        height = DisplayHeight(display, snum);
         Window root = DefaultRootWindow(display);
 
         // these two lines are really all you need
@@ -44,7 +44,7 @@ namespace ProjectOne::Screen::Cairo {
 
         XMapWindow(display, overlay);
 
-        CairoRenderer cairoRenderer(display, overlay, vinfo, width, height);;
+        CairoRenderer cairoRenderer(display, overlay, vinfo, width, height);
         cairoRenderer.render(screenMap);
 
         XFlush(display);
@@ -53,5 +53,15 @@ namespace ProjectOne::Screen::Cairo {
     void CairoOverlayScreenImpl::hide() {
         XUnmapWindow(display, overlay);
         XCloseDisplay(display);
+        width = -1;
+        height = -1;
+    }
+
+    int CairoOverlayScreenImpl::get_width() {
+        return width;
+    }
+
+    int CairoOverlayScreenImpl::get_height() {
+        return height;
     }
 }

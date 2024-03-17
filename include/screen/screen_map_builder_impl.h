@@ -5,7 +5,7 @@
 namespace ProjectOne::Screen {
     class ScreenMapBuilderImpl: public ScreenMapBuilder {
     public:
-        ScreenMap build(int windth, int height) override;
+        ScreenMap build() override;
 
         ~ScreenMapBuilderImpl() override {
         }

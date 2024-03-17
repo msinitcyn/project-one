@@ -5,7 +5,7 @@
 namespace ProjectOne::Screen {
     class ScreenMapBuilder {
     public:
-        virtual ScreenMap build(int width, int height) = 0;
+        virtual ScreenMap build() = 0;
 
         virtual ~ScreenMapBuilder() {
         }

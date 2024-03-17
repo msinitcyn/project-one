@@ -5,6 +5,8 @@
 namespace ProjectOne::Screen::Cairo {
     CairoRenderer::CairoRenderer(Display* display, Window overlay, XVisualInfo visualInfo, int width, int height)
         : surface(nullptr), cairo(nullptr) {
+            this->width = width;
+            this->height = height;
             surface = cairo_xlib_surface_create(display, overlay, visualInfo.visual, width, height);
             cairo = cairo_create(surface);
         }
@@ -25,7 +27,7 @@ namespace ProjectOne::Screen::Cairo {
         cairo_select_font_face(cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 
         for (ScreenSector sector : screenMap.sectors) {
-            cairo_move_to(cairo, sector.x, sector.y);
+            cairo_move_to(cairo, width*sector.x, height*sector.y);
             cairo_show_text(cairo, sector.name.c_str());
         }
     }
