@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <linux/input.h>
 
+#include <iostream>
+
 #include "mouse/evemu/evemu_mouse_manipulator_impl.h"
 
 using std::string;
@@ -18,8 +20,10 @@ namespace ProjectOne::Mouse::Evemu {
 
     void EvemuMouseManipulatorImpl::move(int delta_x, int delta_y) {
         string move_x_command = evemuCommandBuilder->build("event6", EV_REL, REL_X, delta_x);
+        std::cout << move_x_command << std::endl;
         system(move_x_command.c_str());
         string move_y_command = evemuCommandBuilder->build("event6", EV_REL, REL_Y, delta_y);
+        std::cout << move_y_command << std::endl;
         system(move_y_command.c_str());
     }
 

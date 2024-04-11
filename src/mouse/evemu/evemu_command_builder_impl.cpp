@@ -7,6 +7,6 @@ using std::string;
 
 string ProjectOne::Mouse::Evemu::EvemuCommandBuilderImpl::build(string event, int type, int code, int value) {
 
-    return fmt::format("evemu-event /dev/input/{} --type {} --code {} --value {}", event, type, code, value);
+    return fmt::format("evemu-event /dev/input/{} --type {} --code {} --value {} --sync", event, type, code, value);
 }
 

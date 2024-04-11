@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+#include "mouse/uinput/uinput_mouse_manipulator_impl.h"
 #include "screen/cairo/cairo_overlay_screen_impl.h"
 #include "mouse/evemu/evemu_command_builder_impl.h"
 #include "screen/screen_map.h"
@@ -42,6 +43,9 @@ namespace ProjectOne {
 
                 std::cout << x << " " << y << std::endl;
                 mouseManipulator.move_at(x, y);
+                //mouseManipulator.move_at(10, 10);
+                //usleep(1000000);
+                //mouseManipulator.move_at(20,20);
             }
 
         }
@@ -52,10 +56,12 @@ namespace ProjectOne {
 
 int main() {
     ProjectOne::Screen::Cairo::CairoOverlayScreenImpl cairoOverlayScreenImpl;
-    ProjectOne::Mouse::Evemu::EvemuCommandBuilderImpl evemuCommandBuilderImpl;
-    ProjectOne::Mouse::Evemu::EvemuMouseManipulatorImpl mouseManipulatorImpl(evemuCommandBuilderImpl);
+    //ProjectOne::Mouse::Evemu::EvemuCommandBuilderImpl evemuCommandBuilderImpl;
+    //ProjectOne::Mouse::Evemu::EvemuMouseManipulatorImpl mouseManipulatorImpl(evemuCommandBuilderImpl);
+
+    ProjectOne::Mouse::Uinput::UinputMouseManipulatorImpl uinputMouseManipulatorImpl;
     ProjectOne::Screen::ScreenMapBuilderImpl screenMapBuilderImpl;
 
-    ProjectOne::run(cairoOverlayScreenImpl, mouseManipulatorImpl, screenMapBuilderImpl);
+    ProjectOne::run(cairoOverlayScreenImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
     return 0;
 }
