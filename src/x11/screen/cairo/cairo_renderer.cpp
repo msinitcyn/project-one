@@ -1,8 +1,9 @@
 #include <cairo-xlib.h>
 
-#include "screen/cairo/cairo_renderer.h"
+#include "x11/screen/cairo/cairo_renderer.h"
 
-namespace ProjectOne::Screen::Cairo {
+namespace ProjectOne::X11::Screen::Cairo {
+
     CairoRenderer::CairoRenderer(Display* display, Window overlay, XVisualInfo visualInfo, int width, int height)
         : surface(nullptr), cairo(nullptr) {
             this->width = width;

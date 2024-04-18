@@ -7,13 +7,14 @@
 #include <cstring>
 #include <stdio.h>
 
-#include "mouse/uinput/uinput_mouse_manipulator_impl.h"
+#include "x11/mouse/uinput/uinput_mouse_manipulator_impl.h"
 
 using namespace std;
 
-namespace ProjectOne::Mouse::Uinput {
+namespace ProjectOne::X11::Mouse::Uinput {
 
-    UinputMouseManipulatorImpl::UinputMouseManipulatorImpl() {
+    UinputMouseManipulatorImpl::UinputMouseManipulatorImpl(X11ScreenInfo& x11ScreenInfo) {
+        display = x11ScreenInfo.get_display();
         fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
         ioctl(fd, UI_SET_EVBIT, EV_KEY);
         ioctl(fd, UI_SET_KEYBIT, BTN_RIGHT);
@@ -31,9 +32,9 @@ namespace ProjectOne::Mouse::Uinput {
         uidev.id.vendor = 0x1;
         uidev.id.product = 0x1;
         uidev.absmin[ABS_X] = 0;
-        uidev.absmax[ABS_X] = 3200;
+        uidev.absmax[ABS_X] = x11ScreenInfo.get_width();
         uidev.absmin[ABS_Y] = 0;
-        uidev.absmax[ABS_Y] = 900;
+        uidev.absmax[ABS_Y] = x11ScreenInfo.get_height();
 
         write(fd, &uidev, sizeof(uidev));
         ioctl(fd, UI_DEV_CREATE);

@@ -1,15 +1,16 @@
-// uinput_mouse_manipulator_impl
-
 #pragma once
 
 #include <X11/Xlib.h>
 
-#include "../mouse_manipulator.h"
+#include "mouse/mouse_manipulator.h"
+#include "x11/x11_screen_info.h"
 
-namespace ProjectOne::Mouse::Uinput {
+using namespace ProjectOne::Mouse;
+
+namespace ProjectOne::X11::Mouse::Uinput {
     class UinputMouseManipulatorImpl : public MouseManipulator {
     public:
-        UinputMouseManipulatorImpl();
+        UinputMouseManipulatorImpl(X11ScreenInfo& x11ScreenInfo);
 
         void move_at(int x, int y) override;
 

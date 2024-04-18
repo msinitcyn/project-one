@@ -2,17 +2,19 @@
 #include <iostream>
 #include <string>
 
-#include "mouse/uinput/uinput_mouse_manipulator_impl.h"
-#include "screen/cairo/cairo_overlay_screen_impl.h"
-#include "mouse/evemu/evemu_command_builder_impl.h"
+#include "x11/mouse/uinput/uinput_mouse_manipulator_impl.h"
+#include "x11/screen/cairo/cairo_overlay_screen_impl.h"
 #include "screen/screen_map.h"
-#include "mouse/evemu/evemu_mouse_manipulator_impl.h"
 #include "screen/screen_map_builder.h"
 #include "screen/screen_map_builder_impl.h"
 
 using std::cin;
 using std::string;
+
 using namespace ProjectOne::Screen;
+using namespace ProjectOne::X11;
+using namespace ProjectOne::X11::Screen::Cairo;
+using namespace ProjectOne::X11::Mouse::Uinput;
 
 namespace ProjectOne {
 
@@ -28,6 +30,7 @@ namespace ProjectOne {
         //}
  //       mouseManipulator.click();
  
+        mouseManipulator.move_at(1920, 1080);
         char userInput;
         while (true) {
             cin >> userInput;
@@ -38,14 +41,10 @@ namespace ProjectOne {
 
             ScreenSector* screenSector = screenMap.find(sectorName);
             if (screenSector) {
-                int x = overlayScreen.get_width()*screenSector->x;
-                int y = overlayScreen.get_height()*screenSector->y;
+                ScreenPoint clickPoint = overlayScreen.get_sector_center(*screenSector);
 
-                std::cout << x << " " << y << std::endl;
-                mouseManipulator.move_at(x, y);
-                //mouseManipulator.move_at(10, 10);
-                //usleep(1000000);
-                //mouseManipulator.move_at(20,20);
+                std::cout << clickPoint.x << " " << clickPoint.y << std::endl;
+                mouseManipulator.move_at(clickPoint.x, clickPoint.y);
             }
 
         }
@@ -55,11 +54,9 @@ namespace ProjectOne {
 }
 
 int main() {
-    ProjectOne::Screen::Cairo::CairoOverlayScreenImpl cairoOverlayScreenImpl;
-    //ProjectOne::Mouse::Evemu::EvemuCommandBuilderImpl evemuCommandBuilderImpl;
-    //ProjectOne::Mouse::Evemu::EvemuMouseManipulatorImpl mouseManipulatorImpl(evemuCommandBuilderImpl);
-
-    ProjectOne::Mouse::Uinput::UinputMouseManipulatorImpl uinputMouseManipulatorImpl;
+    X11ScreenInfo screenInfo;
+    CairoOverlayScreenImpl cairoOverlayScreenImpl(screenInfo);
+    UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screenInfo);
     ProjectOne::Screen::ScreenMapBuilderImpl screenMapBuilderImpl;
 
     ProjectOne::run(cairoOverlayScreenImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);

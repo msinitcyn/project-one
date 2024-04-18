@@ -8,17 +8,18 @@
 
 #include <cairo-xlib.h>
 
-#include "screen/cairo/cairo_renderer.h"
-#include "screen/cairo/cairo_overlay_screen_impl.h"
+#include "x11/screen/cairo/cairo_renderer.h"
+#include "x11/screen/cairo/cairo_overlay_screen_impl.h"
 
-namespace ProjectOne::Screen::Cairo {
+namespace ProjectOne::X11::Screen::Cairo {
+
+    CairoOverlayScreenImpl::CairoOverlayScreenImpl(X11ScreenInfo& screenInfo) {
+        display = screenInfo.get_display();
+        width = screenInfo.get_width();
+        height = screenInfo.get_height();
+    }
 
     void CairoOverlayScreenImpl::draw(ScreenMap& screenMap) {
-        display = XOpenDisplay(NULL);
-        int snum;
-        snum = DefaultScreen(display);
-        width = DisplayWidth(display, snum);
-        height = DisplayHeight(display, snum);
         Window root = DefaultRootWindow(display);
 
         // these two lines are really all you need
@@ -42,12 +43,20 @@ namespace ProjectOne::Screen::Cairo {
             CWOverrideRedirect | CWColormap | CWBackPixel | CWBorderPixel, &attrs
         );
 
+        std::cout << "window dimensions:" << width << " " << height << std::endl;
+
         XMapWindow(display, overlay);
 
         CairoRenderer cairoRenderer(display, overlay, vinfo, width, height);
         cairoRenderer.render(screenMap);
 
         XFlush(display);
+    }
+
+    ScreenPoint CairoOverlayScreenImpl::get_sector_center(ScreenSector& screenSector) {
+        int x = (screenSector.x + screenSector.width / 2) * width;
+        int y = (screenSector.y + screenSector.height / 2) * height;
+        return {x, y};
     }
 
     void CairoOverlayScreenImpl::hide() {

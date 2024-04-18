@@ -5,7 +5,9 @@
 #include "cairo.h"
 #include "screen/screen_map.h"
 
-namespace ProjectOne::Screen::Cairo {
+using namespace ProjectOne::Screen;
+
+namespace ProjectOne::X11::Screen::Cairo {
     class CairoRenderer {
     public:
         CairoRenderer(Display* display, Window overlay, XVisualInfo visualInfo, int screenWidth, int screenHeight);

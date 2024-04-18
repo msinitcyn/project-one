@@ -1,4 +1,3 @@
-// mouse_manipulator.h
 #pragma once
 
 namespace ProjectOne::Mouse {
