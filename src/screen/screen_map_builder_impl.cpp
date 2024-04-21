@@ -3,15 +3,20 @@
 namespace ProjectOne::Screen {
     ScreenMap ScreenMapBuilderImpl::build() {
         ScreenMap result;
-        ScreenSector test_sector("q", 0.0, 0.0, 0.1, 0.3);
-        result.sectors.push_back(test_sector);
-        ScreenSector test_sector1("w", 0.1, 0.0, 0.1, 0.3);
-        result.sectors.push_back(test_sector1);
-        ScreenSector test_sector2("e", 0.2, 0.0, 0.1, 0.3);
-        result.sectors.push_back(test_sector2);
-        ScreenSector test_sector3("a", 0.0, 0.3, 0.1, 0.3);
-        result.sectors.push_back(test_sector3);
-        ScreenSector test_sector4("s", 0.1, 0.3, 0.1, 0.3);
-        result.sectors.push_back(test_sector4);
-        return result; }
+        const std::string rows[] = {"qwertyuiop", "asdfghjkl;", "zxcvbnm,./"};
+        const int numRows = sizeof(rows) / sizeof(rows[0]);
+        const float widthStep = 1.0f / 10.0f;
+        const float heightStep = 1.0f / 3.0f;
+
+        for (int row = 0; row < numRows; ++row) {
+            float startY = row * heightStep;
+            for (int col = 0; col < rows[row].size(); ++col) {
+                float startX = col * widthStep;
+                ScreenSector sector(std::string(1, rows[row][col]), startX, startY, widthStep, heightStep);
+                result.sectors.push_back(sector);
+            }
+        }
+
+        return result;
+    }
 }

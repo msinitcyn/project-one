@@ -8,6 +8,10 @@
 #include "screen/screen_map_builder.h"
 #include "screen/screen_map_builder_impl.h"
 
+#include <iostream>
+#include <termios.h>
+#include <unistd.h>
+
 using std::cin;
 using std::string;
 
@@ -16,9 +20,27 @@ using namespace ProjectOne::X11;
 using namespace ProjectOne::X11::Screen::Cairo;
 using namespace ProjectOne::X11::Mouse::Uinput;
 
-namespace ProjectOne {
+char getch() {
+    char buf = 0;
+    struct termios old = {0};
+    if (tcgetattr(0, &old) < 0)
+        perror("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if (tcsetattr(0, TCSANOW, &old) < 0)
+        perror("tcsetattr ICANON");
+    if (read(0, &buf, 1) < 0)
+        perror ("read()");
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(0, TCSADRAIN, &old) < 0)
+        perror ("tcsetattr ~ICANON");
+    return (buf);
+}
 
-    void run(Screen::OverlayScreen& overlayScreen, Mouse::MouseManipulator& mouseManipulator, Screen::ScreenMapBuilder& screenMapBuilder) {
+    void run(OverlayScreen& overlayScreen, MouseManipulator& mouseManipulator, ScreenMapBuilder& screenMapBuilder) {
         // settings = settingsBuilder.build();
         // overlayScreen.show(settings);
         ScreenMap screenMap = screenMapBuilder.build();
@@ -30,10 +52,11 @@ namespace ProjectOne {
         //}
  //       mouseManipulator.click();
  
-        mouseManipulator.move_at(1920, 1080);
-        char userInput;
+//        mouseManipulator.move_at(1920, 1080);
+//        char userInput;
         while (true) {
-            cin >> userInput;
+            char userInput = getch();
+//            cin >> userInput;
 
             string sectorName = string(1, userInput);
 
@@ -51,7 +74,6 @@ namespace ProjectOne {
         overlayScreen.hide();
     }
 
-}
 
 int main() {
     X11ScreenInfo screenInfo;
@@ -59,6 +81,8 @@ int main() {
     UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screenInfo);
     ProjectOne::Screen::ScreenMapBuilderImpl screenMapBuilderImpl;
 
-    ProjectOne::run(cairoOverlayScreenImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
+    run(cairoOverlayScreenImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
     return 0;
 }
+
+
