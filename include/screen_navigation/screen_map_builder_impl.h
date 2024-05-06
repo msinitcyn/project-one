@@ -2,10 +2,10 @@
 
 #include "screen_map_builder.h"
 
-namespace ProjectOne::Screen {
+namespace ProjectOne::ScreenNavigation {
     class ScreenMapBuilderImpl: public ScreenMapBuilder {
     public:
-        ScreenMap build() override;
+        ScreenSector build() override;
 
         ~ScreenMapBuilderImpl() override {
         }

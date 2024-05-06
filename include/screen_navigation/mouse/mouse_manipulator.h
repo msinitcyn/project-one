@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ProjectOne::Mouse {
+namespace ProjectOne::ScreenNavigation::Mouse {
     class MouseManipulator {
     public:
         virtual void move_at(int x, int y) = 0;

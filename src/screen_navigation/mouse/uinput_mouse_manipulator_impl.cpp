@@ -7,11 +7,11 @@
 #include <cstring>
 #include <stdio.h>
 
-#include "x11/mouse/uinput/uinput_mouse_manipulator_impl.h"
+#include "screen_navigation/mouse/uinput_mouse_manipulator_impl.h"
 
 using namespace std;
 
-namespace ProjectOne::X11::Mouse::Uinput {
+namespace ProjectOne::ScreenNavigation::Mouse {
 
     UinputMouseManipulatorImpl::UinputMouseManipulatorImpl(X11ScreenInfo& x11ScreenInfo) {
         display = x11ScreenInfo.get_display();

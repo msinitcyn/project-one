@@ -1,6 +1,6 @@
-#include "x11/x11_screen_info.h"
+#include "screen_navigation/x11_screen_info.h"
 
-namespace ProjectOne::X11 {
+namespace ProjectOne::ScreenNavigation {
 
     X11ScreenInfo::X11ScreenInfo() {
         display = XOpenDisplay(NULL);

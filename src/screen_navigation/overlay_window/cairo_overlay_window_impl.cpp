@@ -8,21 +8,20 @@
 
 #include <cairo-xlib.h>
 
-#include "x11/screen/cairo/cairo_renderer.h"
-#include "x11/screen/cairo/cairo_overlay_screen_impl.h"
+#include "screen_navigation/overlay_window/cairo_renderer.h"
+#include "screen_navigation/overlay_window/cairo_overlay_window_impl.h"
 
-namespace ProjectOne::X11::Screen::Cairo {
+namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
-    CairoOverlayScreenImpl::CairoOverlayScreenImpl(X11ScreenInfo& screenInfo) {
+    CairoOverlayWindowImpl::CairoOverlayWindowImpl(X11ScreenInfo& screenInfo) {
         display = screenInfo.get_display();
         width = screenInfo.get_width();
         height = screenInfo.get_height();
     }
 
-    void CairoOverlayScreenImpl::draw(ScreenMap& screenMap) {
+    void CairoOverlayWindowImpl::draw(ScreenSector& screenSector) {
         Window root = DefaultRootWindow(display);
 
-        // these two lines are really all you need
         XSetWindowAttributes attrs;
         attrs.override_redirect = true;
 
@@ -48,29 +47,23 @@ namespace ProjectOne::X11::Screen::Cairo {
         XMapWindow(display, overlay);
 
         CairoRenderer cairoRenderer(display, overlay, vinfo, width, height);
-        cairoRenderer.render(screenMap);
+        cairoRenderer.render(screenSector);
 
         XFlush(display);
     }
 
-    ScreenPoint CairoOverlayScreenImpl::get_sector_center(ScreenSector& screenSector) {
-        int x = (screenSector.x + screenSector.width / 2) * width;
-        int y = (screenSector.y + screenSector.height / 2) * height;
-        return {x, y};
-    }
-
-    void CairoOverlayScreenImpl::hide() {
+    void CairoOverlayWindowImpl::hide() {
         XUnmapWindow(display, overlay);
         XCloseDisplay(display);
         width = -1;
         height = -1;
     }
 
-    int CairoOverlayScreenImpl::get_width() {
+    int CairoOverlayWindowImpl::get_width() {
         return width;
     }
 
-    int CairoOverlayScreenImpl::get_height() {
+    int CairoOverlayWindowImpl::get_height() {
         return height;
     }
 }

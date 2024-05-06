@@ -2,23 +2,23 @@
 #include <iostream>
 #include <string>
 
-#include "x11/mouse/uinput/uinput_mouse_manipulator_impl.h"
-#include "x11/screen/cairo/cairo_overlay_screen_impl.h"
-#include "screen/screen_map.h"
-#include "screen/screen_map_builder.h"
-#include "screen/screen_map_builder_impl.h"
-
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
 
+#include "screen_navigation/overlay_window/overlay_window.h"
+#include "screen_navigation/x11_screen_impl.h"
+#include "screen_navigation/x11_screen_info.h"
+#include "screen_navigation/overlay_window/cairo_overlay_window_impl.h"
+#include "screen_navigation/mouse/uinput_mouse_manipulator_impl.h"
+#include "screen_navigation/screen_map_builder_impl.h"
+
 using std::cin;
 using std::string;
 
-using namespace ProjectOne::Screen;
-using namespace ProjectOne::X11;
-using namespace ProjectOne::X11::Screen::Cairo;
-using namespace ProjectOne::X11::Mouse::Uinput;
+using namespace ProjectOne::ScreenNavigation;
+using namespace ProjectOne::ScreenNavigation::Mouse;
+using namespace ProjectOne::ScreenNavigation::OverlayWindow;
 
 char getch() {
     char buf = 0;
@@ -40,49 +40,37 @@ char getch() {
     return (buf);
 }
 
-    void run(OverlayScreen& overlayScreen, MouseManipulator& mouseManipulator, ScreenMapBuilder& screenMapBuilder) {
-        // settings = settingsBuilder.build();
-        // overlayScreen.show(settings);
-        ScreenMap screenMap = screenMapBuilder.build();
-        overlayScreen.draw(screenMap);
-        //mouseManipulator.move_at(100, 100);
-        //for (int i = 0; i < 100; ++i) {
-        //    mouseManipulator.move(1,1);
-        //    usleep(10000);
-        //}
- //       mouseManipulator.click();
+    void run(ProjectOne::ScreenNavigation::Screen& screen, ProjectOne::ScreenNavigation::OverlayWindow::OverlayWindow& overlay_window, MouseManipulator& mouseManipulator, ScreenMapBuilder& screenMapBuilder) {
+        ScreenSector rootSector = screenMapBuilder.build();
+        overlay_window.draw(rootSector);
  
-//        mouseManipulator.move_at(1920, 1080);
-//        char userInput;
         while (true) {
             char userInput = getch();
-//            cin >> userInput;
 
             string sectorName = string(1, userInput);
 
             std::cout << sectorName << std::endl;
 
-            ScreenSector* screenSector = screenMap.find(sectorName);
-            if (screenSector) {
-                ScreenPoint clickPoint = overlayScreen.get_sector_center(*screenSector);
+            ScreenSector* screen_sector = rootSector.find(sectorName);
+            if (screen_sector) {
+                ScreenPoint clickPoint = screen.get_screen_sector_center(*screen_sector);
 
                 std::cout << clickPoint.x << " " << clickPoint.y << std::endl;
                 mouseManipulator.move_at(clickPoint.x, clickPoint.y);
             }
 
         }
-        overlayScreen.hide();
+        overlay_window.hide();
     }
 
 
 int main() {
     X11ScreenInfo screenInfo;
-    CairoOverlayScreenImpl cairoOverlayScreenImpl(screenInfo);
+    X11ScreenImpl screen(screenInfo);
+    CairoOverlayWindowImpl cairoOverlayWindowImpl(screenInfo);
     UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screenInfo);
-    ProjectOne::Screen::ScreenMapBuilderImpl screenMapBuilderImpl;
+    ScreenMapBuilderImpl screenMapBuilderImpl;
 
-    run(cairoOverlayScreenImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
+    run(screen, cairoOverlayWindowImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
     return 0;
 }
-
-

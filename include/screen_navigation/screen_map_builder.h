@@ -1,11 +1,11 @@
 #pragma once
 
-#include "screen_map.h"
+#include "screen_sector.h"
 
-namespace ProjectOne::Screen {
+namespace ProjectOne::ScreenNavigation {
     class ScreenMapBuilder {
     public:
-        virtual ScreenMap build() = 0;
+        virtual ScreenSector build() = 0;
 
         virtual ~ScreenMapBuilder() {
         }

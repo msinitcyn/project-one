@@ -2,7 +2,7 @@
 
 #include <X11/Xlib.h>
 
-namespace ProjectOne::X11 {
+namespace ProjectOne::ScreenNavigation {
     class X11ScreenInfo {
     public:
         X11ScreenInfo();

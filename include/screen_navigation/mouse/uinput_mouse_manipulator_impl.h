@@ -2,12 +2,10 @@
 
 #include <X11/Xlib.h>
 
-#include "mouse/mouse_manipulator.h"
-#include "x11/x11_screen_info.h"
+#include "mouse_manipulator.h"
+#include "screen_navigation/x11_screen_info.h"
 
-using namespace ProjectOne::Mouse;
-
-namespace ProjectOne::X11::Mouse::Uinput {
+namespace ProjectOne::ScreenNavigation::Mouse {
     class UinputMouseManipulatorImpl : public MouseManipulator {
     public:
         UinputMouseManipulatorImpl(X11ScreenInfo& x11ScreenInfo);

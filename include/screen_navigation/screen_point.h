@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ProjectOne::Screen {
+namespace ProjectOne::ScreenNavigation {
     struct ScreenPoint {
         int x;
         int y;
