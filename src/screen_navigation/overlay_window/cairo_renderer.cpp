@@ -4,11 +4,11 @@
 
 namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
-    CairoRenderer::CairoRenderer(Display* display, Window overlay, XVisualInfo visualInfo, int width, int height)
+    CairoRenderer::CairoRenderer(Display* display, Window overlay, XVisualInfo visual_info, int width, int height)
         : surface(nullptr), cairo(nullptr) {
             this->width = width;
             this->height = height;
-            surface = cairo_xlib_surface_create(display, overlay, visualInfo.visual, width, height);
+            surface = cairo_xlib_surface_create(display, overlay, visual_info.visual, width, height);
             cairo = cairo_create(surface);
         }
 
@@ -27,9 +27,11 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         cairo_set_font_size(cairo, 20);
         cairo_select_font_face(cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 
-        for (ScreenSector sector : screen_sector.inner_sectors) {
-            cairo_move_to(cairo, width*(sector.x+sector.width/2), height*(sector.y+sector.height/2));
-            cairo_show_text(cairo, sector.name.c_str());
+        for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
+            ScreenSector* sector = it->second;
+            string name = it->first;
+            cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
+            cairo_show_text(cairo, name.c_str());
         }
     }
 }

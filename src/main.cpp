@@ -6,6 +6,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "screen_navigation/state_manager_impl.h"
 #include "screen_navigation/overlay_window/overlay_window.h"
 #include "screen_navigation/x11_screen_impl.h"
 #include "screen_navigation/x11_screen_info.h"
@@ -13,12 +14,12 @@
 #include "screen_navigation/mouse/uinput_mouse_manipulator_impl.h"
 #include "screen_navigation/screen_map_builder_impl.h"
 
-using std::cin;
 using std::string;
 
 using namespace ProjectOne::ScreenNavigation;
 using namespace ProjectOne::ScreenNavigation::Mouse;
 using namespace ProjectOne::ScreenNavigation::OverlayWindow;
+
 
 char getch() {
     char buf = 0;
@@ -40,28 +41,30 @@ char getch() {
     return (buf);
 }
 
-    void run(ProjectOne::ScreenNavigation::Screen& screen, ProjectOne::ScreenNavigation::OverlayWindow::OverlayWindow& overlay_window, MouseManipulator& mouseManipulator, ScreenMapBuilder& screenMapBuilder) {
-        ScreenSector rootSector = screenMapBuilder.build();
-        overlay_window.draw(rootSector);
- 
-        while (true) {
-            char userInput = getch();
-
-            string sectorName = string(1, userInput);
-
-            std::cout << sectorName << std::endl;
-
-            ScreenSector* screen_sector = rootSector.find(sectorName);
-            if (screen_sector) {
-                ScreenPoint clickPoint = screen.get_screen_sector_center(*screen_sector);
-
-                std::cout << clickPoint.x << " " << clickPoint.y << std::endl;
-                mouseManipulator.move_at(clickPoint.x, clickPoint.y);
-            }
-
+void run(ProjectOne::ScreenNavigation::Screen& screen, ProjectOne::ScreenNavigation::OverlayWindow::OverlayWindow& overlay_window, MouseManipulator& mouse_manipulator, StateManager& state_manager) {
+    ScreenSector screen_sector = state_manager.get_current_state();
+    overlay_window.draw(screen_sector);
+    //char c = getch();
+    char c = 'd';
+    while (c != '1') {
+        if (c == '2') {
+            state_manager.go_back();
+        } else if (c == '4') {
+            mouse_manipulator.click();
+            state_manager.reset();
+            break;
+        } else {
+            string search_string(1, c);
+            state_manager.go_to(search_string);
         }
-        overlay_window.hide();
+        ScreenSector& screen_sector = state_manager.get_current_state();
+        //overlay_window.hide();
+        overlay_window.draw(screen_sector);
+        ScreenPoint point = screen.get_screen_sector_center(screen_sector);
+        mouse_manipulator.move_at(point.x, point.y);
     }
+}
+
 
 
 int main() {
@@ -69,8 +72,9 @@ int main() {
     X11ScreenImpl screen(screenInfo);
     CairoOverlayWindowImpl cairoOverlayWindowImpl(screenInfo);
     UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screenInfo);
-    ScreenMapBuilderImpl screenMapBuilderImpl;
+    ScreenMapBuilderImpl screen_builder;
+    StateManagerImpl state_manager(screen_builder);
 
-    run(screen, cairoOverlayWindowImpl, uinputMouseManipulatorImpl, screenMapBuilderImpl);
+    run(screen, cairoOverlayWindowImpl, uinputMouseManipulatorImpl, state_manager);
     return 0;
 }

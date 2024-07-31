@@ -9,9 +9,9 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
     class CairoOverlayWindowImpl : public OverlayWindow {
     public:
-        CairoOverlayWindowImpl(X11ScreenInfo& screenInfo);
+        CairoOverlayWindowImpl(X11ScreenInfo& screen_info);
 
-        void draw(ScreenSector& screenSector) override;
+        void draw(ScreenSector& screen_sector) override;
         void hide() override;
 
         int get_width() override;
@@ -21,9 +21,10 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         }
 
     private:
+        X11ScreenInfo& screen_info;
         int width;
         int height;
-        Display *display; 
-        Window overlay;
+        Display* display; 
+        Window* overlay;
     };
 }

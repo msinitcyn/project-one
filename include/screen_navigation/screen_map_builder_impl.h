@@ -5,7 +5,7 @@
 namespace ProjectOne::ScreenNavigation {
     class ScreenMapBuilderImpl: public ScreenMapBuilder {
     public:
-        ScreenSector build() override;
+        ScreenSector build(float x, float y, float width, float height) override;
 
         ~ScreenMapBuilderImpl() override {
         }

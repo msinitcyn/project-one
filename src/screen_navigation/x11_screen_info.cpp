@@ -3,7 +3,7 @@
 namespace ProjectOne::ScreenNavigation {
 
     X11ScreenInfo::X11ScreenInfo() {
-        display = XOpenDisplay(NULL);
+        display = XOpenDisplay(nullptr);
         int snum = DefaultScreen(display);
         width = DisplayWidth(display, snum);
         height = DisplayHeight(display, snum);

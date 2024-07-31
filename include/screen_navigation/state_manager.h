@@ -1,17 +1,16 @@
 #pragma once
 
-#include "state.h"
+#include "screen_sector.h"
 
 namespace ProjectOne::ScreenNavigation {
     class StateManager {
     public:
+        virtual ScreenSector& get_current_state() = 0;
+        virtual void reset() = 0;
+        virtual void go_back() = 0;
+        virtual void go_to(string sector_key) = 0;
+
         virtual ~StateManager() {
         }
-
-        virtual void add(State& state);
-
-        virtual State* step_back();
-
-        virtual State* step_forward();
     };
 }

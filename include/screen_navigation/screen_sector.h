@@ -2,25 +2,32 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 using std::string;
 using std::vector;
+using std::map;
 
 namespace ProjectOne::ScreenNavigation {
     class ScreenSector {
     public:
-        string name;
         float x;
         float y;
         float width;
         float height;
+        map<string, ScreenSector*> inner_sectors;
 
-        vector<ScreenSector> inner_sectors;
+        ScreenSector();
 
-        ScreenSector(const string& n, float x_value, float y_value, float width_value, float height_value)
-            : name(n), x(x_value), y(y_value), width(width_value), height(height_value) {
-        }
+        ScreenSector(ScreenSector* parent, float x_value, float y_value, float width_value, float height_value);
 
-        ScreenSector* find(string key);
+        ScreenSector* find_child(const string& key);
+
+        void add_child(const string& key, ScreenSector& child);
+
+        ScreenSector* get_parent();
+
+    private:
+        ScreenSector* parent;
     };
 }

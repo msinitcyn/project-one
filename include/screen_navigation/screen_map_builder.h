@@ -5,7 +5,7 @@
 namespace ProjectOne::ScreenNavigation {
     class ScreenMapBuilder {
     public:
-        virtual ScreenSector build() = 0;
+        virtual ScreenSector build(float x, float y, float width, float height) = 0;
 
         virtual ~ScreenMapBuilder() {
         }
