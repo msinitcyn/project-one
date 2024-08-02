@@ -16,6 +16,19 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         cairo_destroy(cairo);
         cairo_surface_destroy(surface);
     }
+    
+    void CairoRenderer::iterate_screen_sector(ScreenSector& screen_sector, float w, float h, float x, float y) {
+        for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
+            ScreenSector* sector = it->second;
+            string name = it->first;
+            if (sector->inner_sectors.size()) {
+                iterate_screen_sector(*sector, w*sector->width, h*sector->height, x+sector->x*sector->width, y+sector->y*sector->height);
+            } else {
+                cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
+                cairo_show_text(cairo, name.c_str());
+            }
+        }
+    }
 
     void CairoRenderer::render(ScreenSector& screen_sector) {
         cairo_set_source_rgba(cairo, 1.0, 0.0, 0.0, 0.5);
@@ -27,11 +40,12 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         cairo_set_font_size(cairo, 20);
         cairo_select_font_face(cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 
-        for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
-            ScreenSector* sector = it->second;
-            string name = it->first;
-            cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
-            cairo_show_text(cairo, name.c_str());
-        }
+        iterate_screen_sector(screen_sector, width, height, 0, 0);
+        //for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
+        //    ScreenSector* sector = it->second;
+        //    string name = it->first;
+        //    cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
+        //    cairo_show_text(cairo, name.c_str());
+        //}
     }
 }

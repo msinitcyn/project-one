@@ -15,6 +15,8 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         void render(ScreenSector& screen_sector);
 
     private:
+        void iterate_screen_sector(ScreenSector& screen_sector, float w, float h, float x, float y);
+
         cairo_surface_t* surface;
         cairo_t* cairo;
         int width;

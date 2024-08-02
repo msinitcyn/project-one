@@ -62,6 +62,8 @@ void run(ProjectOne::ScreenNavigation::Screen& screen, ProjectOne::ScreenNavigat
         overlay_window.draw(screen_sector);
         ScreenPoint point = screen.get_screen_sector_center(screen_sector);
         mouse_manipulator.move_at(point.x, point.y);
+        //c = getch();
+        c = 'd';
     }
 }
 
