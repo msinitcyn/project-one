@@ -15,19 +15,15 @@
 namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
     CairoOverlayWindowImpl::CairoOverlayWindowImpl(X11ScreenInfo& screen_info): screen_info(screen_info) {
-        overlay = nullptr;
+        overlay = -1;
     }
 
-    void CairoOverlayWindowImpl::draw(ScreenSector& screen_sector) {
+    void CairoOverlayWindowImpl::draw(vector<ScreenSector*>& screen_sectors) {
         try {
-
-            if (screen_sector.inner_sectors.size())
-                std::cout << "before: " << screen_sector.inner_sectors.begin()->second->width << std::endl;
-
             display = screen_info.get_display();
             width = screen_info.get_width();
             height = screen_info.get_height();
-     
+
             Window root = DefaultRootWindow(display);
 
             XSetWindowAttributes attrs;
@@ -44,42 +40,25 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
             attrs.border_pixel = 0;
 
-            if (screen_sector.inner_sectors.size())
-                std::cout << "after: " << screen_sector.inner_sectors.begin()->second->width << std::endl;
-
-            if (overlay) {
-                //XUnmapWindow(display, *overlay);
-                //XDestroyWindow(display, *overlay);
+            if (overlay != -1) {
+                XUnmapWindow(display, overlay);
+                XDestroyWindow(display, overlay);
             }
 
-            //if (!overlay) {
-                //XUnmapWindow(display, *overlay);
-                //XDestroyWindow(display, *overlay);
-                Window *a;
-                *a = XCreateWindow(
-                    display, root,
-                    0, 0, width, height, 0,
-                    vinfo.depth, InputOutput, 
-                    vinfo.visual,
-                    CWOverrideRedirect | CWColormap | CWBackPixel | CWBorderPixel, &attrs
-                );
-
-                if (overlay) {
-                    XDestroyWindow(display, *overlay);
-                }
-
-                overlay = a;
-                //*overlay = overlay1;
-                //Window overlay2 = *overlay;
-                //int test = 1;
-            //}
+            overlay = XCreateWindow(
+                display, root,
+                0, 0, width, height, 0,
+                vinfo.depth, InputOutput, 
+                vinfo.visual,
+                CWOverrideRedirect | CWColormap | CWBackPixel | CWBorderPixel, &attrs
+            );
 
             std::cout << "window dimensions:" << width << " " << height << std::endl;
 
-            XMapWindow(display, *overlay);
+            XMapWindow(display, overlay);
 
-            CairoRenderer cairoRenderer(display, *overlay, vinfo, width, height);
-            cairoRenderer.render(screen_sector);
+            CairoRenderer cairoRenderer(display, overlay, vinfo, width, height);
+            cairoRenderer.render(screen_sectors);
 
             XFlush(display);
         }
@@ -89,7 +68,7 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
     }
 
     void CairoOverlayWindowImpl::hide() {
-        XUnmapWindow(display, *overlay);
+        XUnmapWindow(display, overlay);
         XCloseDisplay(display);
         width = -1;
         height = -1;

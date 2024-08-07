@@ -12,7 +12,6 @@
 #include "screen_navigation/x11_screen_info.h"
 #include "screen_navigation/overlay_window/cairo_overlay_window_impl.h"
 #include "screen_navigation/mouse/uinput_mouse_manipulator_impl.h"
-#include "screen_navigation/screen_map_builder_impl.h"
 
 using std::string;
 
@@ -41,42 +40,39 @@ char getch() {
     return (buf);
 }
 
-void run(ProjectOne::ScreenNavigation::Screen& screen, ProjectOne::ScreenNavigation::OverlayWindow::OverlayWindow& overlay_window, MouseManipulator& mouse_manipulator, StateManager& state_manager) {
-    ScreenSector screen_sector = state_manager.get_current_state();
-    overlay_window.draw(screen_sector);
-    //char c = getch();
-    char c = 'd';
-    while (c != '1') {
+void run(ProjectOne::ScreenNavigation::OverlayWindow::OverlayWindow& overlay_window, MouseManipulator& mouse_manipulator, StateManager& state_manager) {
+    state_manager.reset();
+    while (true) {
+        vector<ScreenSector*> screen_sectors = state_manager.get_current_state();
+        int x = screen_sectors[0]->x;
+        int y = screen_sectors[0]->y;
+        mouse_manipulator.move_at(x, y);
+        overlay_window.draw(screen_sectors);
+        char c = getch();
+        //char c = 'd';
         if (c == '2') {
             state_manager.go_back();
-        } else if (c == '4') {
+        } else if (c == '3') {
+            overlay_window.hide();
             mouse_manipulator.click();
-            state_manager.reset();
+            //break;
+        } else if (c == '4') {
             break;
         } else {
             string search_string(1, c);
             state_manager.go_to(search_string);
         }
-        ScreenSector& screen_sector = state_manager.get_current_state();
-        //overlay_window.hide();
-        overlay_window.draw(screen_sector);
-        ScreenPoint point = screen.get_screen_sector_center(screen_sector);
-        mouse_manipulator.move_at(point.x, point.y);
-        //c = getch();
-        c = 'd';
     }
 }
 
 
-
 int main() {
-    X11ScreenInfo screenInfo;
-    X11ScreenImpl screen(screenInfo);
-    CairoOverlayWindowImpl cairoOverlayWindowImpl(screenInfo);
-    UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screenInfo);
-    ScreenMapBuilderImpl screen_builder;
-    StateManagerImpl state_manager(screen_builder);
+    X11ScreenInfo screen_info;
+    CairoOverlayWindowImpl cairoOverlayWindowImpl(screen_info);
+    UinputMouseManipulatorImpl uinputMouseManipulatorImpl(screen_info);
+    ScreenMapBuilder screen_builder;
+    StateManagerImpl state_manager(screen_builder, screen_info);
 
-    run(screen, cairoOverlayWindowImpl, uinputMouseManipulatorImpl, state_manager);
+    run(cairoOverlayWindowImpl, uinputMouseManipulatorImpl, state_manager);
     return 0;
 }

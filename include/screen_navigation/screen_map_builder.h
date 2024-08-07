@@ -1,13 +1,13 @@
 #pragma once
 
+#include <vector>
 #include "screen_sector.h"
+
+using std::vector;
 
 namespace ProjectOne::ScreenNavigation {
     class ScreenMapBuilder {
     public:
-        virtual ScreenSector build(float x, float y, float width, float height) = 0;
-
-        virtual ~ScreenMapBuilder() {
-        }
+        vector<ScreenSector*> build(int x, int y, int width, int height);
     };
 }

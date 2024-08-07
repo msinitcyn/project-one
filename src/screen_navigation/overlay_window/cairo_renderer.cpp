@@ -2,6 +2,9 @@
 
 #include "screen_navigation/overlay_window/cairo_renderer.h"
 
+using std::max;
+using std::min;
+
 namespace ProjectOne::ScreenNavigation::OverlayWindow {
 
     CairoRenderer::CairoRenderer(Display* display, Window overlay, XVisualInfo visual_info, int width, int height)
@@ -16,36 +19,32 @@ namespace ProjectOne::ScreenNavigation::OverlayWindow {
         cairo_destroy(cairo);
         cairo_surface_destroy(surface);
     }
-    
-    void CairoRenderer::iterate_screen_sector(ScreenSector& screen_sector, float w, float h, float x, float y) {
-        for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
-            ScreenSector* sector = it->second;
-            string name = it->first;
-            if (sector->inner_sectors.size()) {
-                iterate_screen_sector(*sector, w*sector->width, h*sector->height, x+sector->x*sector->width, y+sector->y*sector->height);
-            } else {
-                cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
-                cairo_show_text(cairo, name.c_str());
-            }
-        }
-    }
 
-    void CairoRenderer::render(ScreenSector& screen_sector) {
+    void CairoRenderer::render(vector<ScreenSector*>& screen_sectors) {
         cairo_set_source_rgba(cairo, 1.0, 0.0, 0.0, 0.5);
         cairo_rectangle(cairo, 0, 0, width, height);
         cairo_fill(cairo);
 
         cairo_set_source_rgba(cairo, 0.0, 1.0, 0.0, 1.0);
 
-        cairo_set_font_size(cairo, 20);
-        cairo_select_font_face(cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        int font_size = min(20,screen_sectors[0]->width/2);
+        font_size = max(font_size, 4);
 
-        iterate_screen_sector(screen_sector, width, height, 0, 0);
-        //for (auto it = screen_sector.inner_sectors.begin(); it != screen_sector.inner_sectors.end(); ++it) {
-        //    ScreenSector* sector = it->second;
-        //    string name = it->first;
-        //    cairo_move_to(cairo, width*(sector->x+sector->width/2), height*(sector->y+sector->height/2));
-        //    cairo_show_text(cairo, name.c_str());
-        //}
+        cairo_set_font_size(cairo, font_size);
+        cairo_select_font_face(cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_line_width(cairo, 1.0);
+
+        for (ScreenSector* screen_sector : screen_sectors) {
+            cairo_move_to(cairo, screen_sector->x+(screen_sector->width-font_size)/2, screen_sector->y+(screen_sector->height-font_size)/2);
+            cairo_show_text(cairo, screen_sector->content.c_str());
+
+            cairo_move_to(cairo, screen_sector->x, screen_sector->y);
+            cairo_line_to(cairo, screen_sector->x+screen_sector->width, screen_sector->y);
+            cairo_stroke(cairo);
+
+            cairo_move_to(cairo, screen_sector->x+screen_sector->width, screen_sector->y);
+            cairo_line_to(cairo, screen_sector->x+screen_sector->width, screen_sector->y+screen_sector->height);
+            cairo_stroke(cairo);
+        }
     }
 }

@@ -2,16 +2,16 @@
 #include <unistd.h>
 
 namespace ProjectOne::ScreenNavigation {
-    StateManagerImpl::StateManagerImpl(ScreenMapBuilder& screen_builder) : screen_builder(screen_builder), states(0) {
+    StateManagerImpl::StateManagerImpl(ScreenMapBuilder& screen_builder, ScreenInfo& screen_info) : screen_builder(screen_builder), screen_info(screen_info), states(0) {
         reset();
     }
 
-    ScreenSector& StateManagerImpl::get_current_state() {
+    vector<ScreenSector*> StateManagerImpl::get_current_state() {
         return states[current_state];
     }
 
     void StateManagerImpl::reset() {
-        ScreenSector root = screen_builder.build(0,0,1,1);
+        vector<ScreenSector*> root = screen_builder.build(0, 0, screen_info.get_width(), screen_info.get_height());
         current_state = 0;
         if (!states.size()) {
             states.push_back(root);
@@ -25,18 +25,21 @@ namespace ProjectOne::ScreenNavigation {
     }
 
     void StateManagerImpl::go_to(string sector_key) {
-        ScreenSector current = get_current_state();
-        ScreenSector* target_sector = current.find_child(sector_key);
-        if (target_sector) {
-            ScreenSector new_root(nullptr, current.x, current.y, current.width, current.height);
-            ScreenSector new_child = screen_builder.build(target_sector->x, target_sector->y, target_sector->width, target_sector->height);
-            new_root.add_child("some", new_child);
-
+        vector<ScreenSector*> current = get_current_state();
+        ScreenSector* target = nullptr;
+        for (ScreenSector* screen_sector : current) {
+            if (screen_sector->content == sector_key) {
+                target = screen_sector;
+                break;
+            }
+        }
+        if (target) {
+            vector<ScreenSector*> next = screen_builder.build(target->x, target->y, target->width, target->height);
             current_state++;
-            if ((int)states.size() >= current_state) {
-                states.push_back(new_root);
+            if ((int)states.size() <= current_state) {
+                states.push_back(next);
             } else {
-                states[current_state] = new_root;
+                states[current_state] = next;
             }
         }
     }
